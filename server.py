@@ -9,6 +9,20 @@ DB_NAME = "data.db"
 conn = None
 cursor = None
 db_connected = False
+def display_help():
+    help_message = """
+Server Command Help:
+--------------------
+OPEN <file_path>       - Open a specific SQLite database file.
+ADD <name> <string1 string2 ... stringN> - Add a new record with the given name and strings.
+GET <name>             - Retrieve all strings associated with the given name.
+REMOVE <name>          - Remove the record associated with the given name.
+LIST ALL               - List all records in the database.
+SORT <index>           - Sort records by the specified string index (1-based).
+EXIT                   - Shut down the server.
+--help                 - Display this help message.
+"""
+    return help_message
 
 def handle_command(command):
     global conn, cursor, db_connected, DB_NAME
@@ -18,7 +32,10 @@ def handle_command(command):
     response = ""
 
     try:
-        if action == "OPEN":
+        if parts[0]=="--help":
+            response=display_help()
+           
+        elif action == "OPEN":
             if len(parts) < 2:
                 response = "Error: Please specify a database file path."
                 return response
@@ -112,16 +129,15 @@ def start_server():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server_socket:
         server_socket.bind((HOST, PORT))
         server_socket.listen(5)
-        print(f"Server listening on {HOST}:{PORT}...")
 
         while True:
             client_socket, client_address = server_socket.accept()
             with client_socket:
-                print(f"Connected to {client_address}")
+                
                 data = client_socket.recv(1024).decode('utf-8')
                 if not data:
                     break
-                print(f"Received command: {data}")
+               
             
                 response = handle_command(data)
                 client_socket.sendall(response.encode('utf-8'))
