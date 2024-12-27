@@ -16,8 +16,7 @@ def send_command(command):
             print("Error: Unable to connect to the server. Ensure the server is running.")
 
 def main():
-    print("Available commands: ADD, REMOVE, GET, LIST ALL, SORT, EXIT")
-    print("Example command for ADD: ADD John apple orange banana")
+    print("USE --help for more information")
     while True:
         command = input("Enter command: ").strip()
 
